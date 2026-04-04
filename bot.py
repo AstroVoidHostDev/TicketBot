@@ -36,10 +36,26 @@ async def is_admin(member):
 class TicketDropdown(discord.ui.Select):
     def __init__(self):
         options = [
-            discord.SelectOption(label="Support", emoji="🛠️"),
-            discord.SelectOption(label="Bug Report", emoji="🐞"),
-            discord.SelectOption(label="Purchase", emoji="💰"),
-            discord.SelectOption(label="Other", emoji="📩"),
+            discord.SelectOption(
+    label="Customer Support",
+    description="Get assistance with general questions, guidance, or account-related help.",
+    emoji="🎧"
+),
+           discord.SelectOption(
+    label="Report an Issue",
+    description="Report bugs, errors, or technical problems you are experiencing.",
+    emoji="⚠️"
+),
+          discord.SelectOption(
+    label="Payments & Orders",
+    description="Get help with purchases, billing inquiries, or transaction issues.",
+    emoji="💰"
+),
+         discord.SelectOption(
+    label="Other Requests",
+    description="Submit any other inquiries, feedback, or special requests.",
+    emoji="📨"
+),
         ]
         super().__init__(
             placeholder="Select Ticket Category",
