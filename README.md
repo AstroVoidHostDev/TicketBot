@@ -1,20 +1,149 @@
 # 🎟️ Ultimate Discord Ticket Bot
+A premium Discord ticket bot with dropdown system, private tickets, transcripts, and dynamic branding.
+---
+🚀 Features
+🎯 Dropdown ticket system (Support, Bug, Purchase, Other)
+🔒 Private ticket channels (user + staff only)
+📜 Transcript logs
+🎨 Stylish panel UI with banner
+⚡ Fast & optimized
+🔁 24/7 hosting with PM2
+🏷️ Custom bot name using `.env`
+---
+📦 Requirements
+Python 3.11
+Node.js (for PM2)
+Discord Bot Token
+---
+⚙️ FULL INSTALL GUIDE
+1. Update system
+```bash
+apt update && apt upgrade -y
+```
+---
+2. Install Python 3.11
+```bash
+apt install -y build-essential wget libssl-dev zlib1g-dev libncurses5-dev libreadline-dev libsqlite3-dev libgdbm-dev libbz2-dev libexpat1-dev liblzma-dev tk-dev
 
-Full setup guide included.
+cd /tmp
+wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz
+tar -xvf Python-3.11.9.tgz
+cd Python-3.11.9
 
-## Setup
-1. Install Python 3.11
-2. Create venv
-3. Install deps:
+./configure --enable-optimizations
+make -j$(nproc)
+make altinstall
+```
+---
+3. Upload / Clone bot files
+```bash
+git clone https://github.com/yourname/ticket-bot.git
+cd ticket-bot
+```
+---
+4. Create virtual environment
+```bash
+python3.11 -m venv myenv
+source myenv/bin/activate
+```
+---
+5. Install dependencies
+```bash
+pip install -U pip
 pip install discord.py python-dotenv
-
-## Run
+```
+---
+6. Create .env file
+```bash
+nano .env
+```
+Paste:
+```env
+BOT_TOKEN=your_discord_bot_token
+TICKET_BOT_NAME=hloticket
+```
+---
+7. Run bot
+```bash
 python bot.py
-
-## Env
-BOT_TOKEN=your_token
-TICKET_BOT_NAME=your_name
-
-## Commands
+```
+---
+🤖 DISCORD SETUP
+Enable Intents:
+Message Content Intent ✅
+Server Members Intent ✅
+---
+Run setup command:
+```
 /setup
+```
+Select:
+Category (tickets)
+Log Channel
+---
+Send panel:
+```
 .panel
+```
+---
+🔥 PM2 (24/7 HOSTING)
+Install PM2
+```bash
+npm install -g pm2
+```
+Start bot
+```bash
+pm2 start bot.py --name ticket-bot --interpreter ./myenv/bin/python
+```
+Save
+```bash
+pm2 save
+```
+Auto start
+```bash
+pm2 startup
+```
+(copy command and run)
+---
+📊 PM2 COMMANDS
+```bash
+pm2 list
+pm2 logs ticket-bot
+pm2 restart ticket-bot
+pm2 stop ticket-bot
+pm2 delete ticket-bot
+```
+---
+📁 FILE STRUCTURE
+```
+project/
+ ├── bot.py
+ ├── config.json
+ ├── .env
+ └── myenv/
+```
+---
+⚠️ FIX ERRORS
+Setup nahi hua
+→ Run `/setup`
+Missing Permissions
+→ Give bot:
+Send Messages
+Manage Channels
+Embed Links
+Token Error
+→ Check `.env`
+---
+💎 CUSTOMIZATION
+Change name:
+```
+TICKET_BOT_NAME=yourname
+```
+Change banner:
+Edit in bot.py:
+```python
+embed.set_image(url="your_url")
+```
+---
+🔥 DONE
+Your bot is now fully working 💀🔥
