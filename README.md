@@ -48,6 +48,7 @@ make altinstall
 3. Upload / Clone bot files
 ```bash
 git clone https://github.com/AstroVoidHostDev/TicketBot
+cd TicketBot
 ```
 ---
 4. Create virtual environment
