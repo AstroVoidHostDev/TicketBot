@@ -146,3 +146,5 @@ embed.set_image(url="your_url")
 ---
 🔥 DONE
 Your bot is now fully working 💀🔥
+
+Made With ❤️ ITZ_YTANSH
