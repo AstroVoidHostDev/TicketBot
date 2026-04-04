@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
-import json, os, io
+import json, os, io, asyncio
 from datetime import datetime
 
 # ===== ENV =====
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
-BOT_NAME = os.getenv("TICKET_BOT_NAME", "Ticket Bot")  # default fallback
+BOT_NAME = os.getenv("TICKET_BOT_NAME", "Ticket Bot")
 
 # ===== CONFIG =====
 def load_config():
@@ -23,7 +23,6 @@ config = load_config()
 
 # ===== BOT =====
 intents = discord.Intents.all()
-intents.message_content = True
 bot = commands.Bot(command_prefix=".", intents=intents)
 
 # ===== ADMIN CHECK =====
@@ -36,13 +35,13 @@ async def is_admin(member):
 class TicketDropdown(discord.ui.Select):
     def __init__(self):
         options = [
-            discord.SelectOption(label="Support", emoji="🛠️", description="General Help"),
-            discord.SelectOption(label="Bug Report", emoji="🐞", description="Report a bug"),
-            discord.SelectOption(label="Purchase", emoji="💰", description="Buy something"),
-            discord.SelectOption(label="Other", emoji="📩", description="Other queries"),
+            discord.SelectOption(label="Support", emoji="🛠️"),
+            discord.SelectOption(label="Bug Report", emoji="🐞"),
+            discord.SelectOption(label="Purchase", emoji="💰"),
+            discord.SelectOption(label="Other", emoji="📩"),
         ]
         super().__init__(
-            placeholder="Select A Option According Your Need",
+            placeholder="Select Ticket Category",
             min_values=1,
             max_values=1,
             options=options
@@ -60,10 +59,10 @@ class TicketDropdown(discord.ui.Select):
             await interaction.response.send_message("❌ Setup nahi hua!", ephemeral=True)
             return
 
-        # Already ticket check
+        # already ticket check
         for ch in category.channels:
             if str(user.id) in ch.name:
-                await interaction.response.send_message("❌ Already ticket Is Opened!", ephemeral=True)
+                await interaction.response.send_message("❌ Already ticket open!", ephemeral=True)
                 return
 
         overwrites = {
@@ -80,7 +79,7 @@ class TicketDropdown(discord.ui.Select):
 
         embed = discord.Embed(
             title=f"🎟️ {choice} Ticket",
-            description=f"{user.mention} welcome!\nExplain your issue.\nStaff will respond soon 🚀",
+            description=f"{user.mention}, explain your issue.\nStaff will help you soon 🚀",
             color=discord.Color.green()
         )
         embed.set_footer(text=f"{BOT_NAME} ⚡ | {datetime.now().strftime('%d/%m %H:%M')}")
@@ -97,7 +96,7 @@ class TicketView(discord.ui.View):
         self.add_item(TicketDropdown())
 
 # =========================
-# CLOSE BUTTON
+# CLOSE + CLAIM
 # =========================
 class CloseView(discord.ui.View):
     def __init__(self):
@@ -110,9 +109,17 @@ class CloseView(discord.ui.View):
             await interaction.response.send_message("❌ Only staff!", ephemeral=True)
             return
 
+        channel = interaction.channel
+
+        # add ✔ to name
+        if "✔" not in channel.name:
+            await channel.edit(name=f"✔-{channel.name}")
+
         self.claimed_by = interaction.user
 
-        await interaction.response.send_message(f"✅ Ticket claimed by {interaction.user.mention}", ephemeral=False)
+        await interaction.response.send_message(
+            f"✅ Ticket claimed by {interaction.user.mention}"
+        )
 
     @discord.ui.button(label="🔒 Close Ticket", style=discord.ButtonStyle.danger)
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -121,64 +128,75 @@ class CloseView(discord.ui.View):
             return
 
         channel = interaction.channel
-        guild = interaction.guild
-        data = config["servers"].get(str(guild.id), {})
-        log_channel = bot.get_channel(data.get("log_channel_id"))
 
-        # ===== GET USER FROM CHANNEL NAME =====
+        # get ticket user
         try:
             user_id = int(channel.name.split("-")[-1])
             ticket_user = await bot.fetch_user(user_id)
         except:
             ticket_user = None
 
-        # ===== SAVE MESSAGES =====
+        # transcript
         msgs = []
         async for m in channel.history(limit=200, oldest_first=True):
             msgs.append(f"{m.author}: {m.content}")
 
-        transcript_text = "\n".join(msgs)
-        file = discord.File(io.StringIO(transcript_text), filename=f"{channel.name}.txt")
+        file = discord.File(io.StringIO("\n".join(msgs)), filename=f"{channel.name}.txt")
 
-        embed = discord.Embed(
-            title="📜 Ticket Closed",
-            description=f"{channel.name}\nClosed by {interaction.user.mention}",
-            color=discord.Color.red()
-        )
-
-        if self.claimed_by:
-            embed.add_field(name="✅ Claimed By", value=self.claimed_by.mention, inline=False)
-
-        # ===== SEND TO LOG CHANNEL =====
-        if log_channel:
-            await log_channel.send(embed=embed, file=file)
-
-        # ===== DM USER =====
+        # DM only
         if ticket_user:
             try:
-                dm_embed = discord.Embed(
-                    title="📩 Your Ticket Closed",
+                embed = discord.Embed(
+                    title="📩 Ticket Closed",
                     description=f"Your ticket `{channel.name}` has been closed.",
                     color=discord.Color.orange()
                 )
                 if self.claimed_by:
-                    dm_embed.add_field(name="✅ Claimed By", value=self.claimed_by.mention, inline=False)
+                    embed.add_field(name="Claimed By", value=self.claimed_by.mention)
 
-                await ticket_user.send(embed=dm_embed, file=file)
+                await ticket_user.send(embed=embed, file=file)
             except:
-                pass  # DM off hai to ignore
+                pass
 
         await interaction.response.send_message("Closing...", ephemeral=True)
         await channel.delete()
+
+# =========================
+# AUTO CLOSE (3 DAYS)
+# =========================
+async def auto_close():
+    await bot.wait_until_ready()
+
+    while True:
+        for guild in bot.guilds:
+            data = config["servers"].get(str(guild.id), {})
+            category = discord.utils.get(guild.categories, id=data.get("category_id"))
+
+            if not category:
+                continue
+
+            for ch in category.channels:
+                # skip claimed
+                if "✔" in ch.name:
+                    continue
+
+                # 3 days
+                if (discord.utils.utcnow() - ch.created_at).days >= 3:
+                    try:
+                        await ch.delete()
+                    except:
+                        pass
+
+        await asyncio.sleep(3600)
+
 # =========================
 # SETUP
 # =========================
-@bot.tree.command(name="setup", description="Setup ticket system")
+@bot.tree.command(name="setup")
 @commands.has_permissions(administrator=True)
-async def setup(interaction: discord.Interaction, category: discord.CategoryChannel, log_channel: discord.TextChannel):
+async def setup(interaction: discord.Interaction, category: discord.CategoryChannel):
     config["servers"][str(interaction.guild.id)] = {
-        "category_id": category.id,
-        "log_channel_id": log_channel.id
+        "category_id": category.id
     }
     save_config(config)
     await interaction.response.send_message("✅ Setup Done!", ephemeral=True)
@@ -208,12 +226,24 @@ async def panel(ctx):
 
     await ctx.send(embed=embed, view=TicketView())
 
+
 # =========================
 # READY
 # =========================
 @bot.event
 async def on_ready():
-    print(f"🔥 Logged in as {bot.user} | {BOT_NAME}")
+    print(f"🔥 Logged in as {bot.user}")
+
+    # 🎯 BOT STATUS
+    await bot.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{BOT_NAME}"
+        ),
+        status=discord.Status.online
+    )
+
+    bot.loop.create_task(auto_close())
     await bot.tree.sync()
 
 # =========================
