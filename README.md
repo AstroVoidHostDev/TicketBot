@@ -60,6 +60,7 @@ source myenv/bin/activate
 ```bash
 pip install -U pip
 pip install discord.py python-dotenv
+pip install -r requirements.txt
 ```
 ---
 6. Create .env file
