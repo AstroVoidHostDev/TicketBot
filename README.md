@@ -1,5 +1,15 @@
 # 🎟️ Ultimate Discord Ticket Bot
 A premium Discord ticket bot with dropdown system, private tickets, transcripts, and dynamic branding.
+
+
+<p align="center">
+  <img src="https://media.discordapp.net/attachments/1487308929795883089/1490001952564580595/standard.gif" width="500">
+</p>
+
+<p align="center">
+  ⚡ Premium Ticket System • Fast • Secure • Customizable ⚡
+</p>
+
 ---
 🚀 Features
 🎯 Dropdown ticket system (Support, Bug, Purchase, Other)
