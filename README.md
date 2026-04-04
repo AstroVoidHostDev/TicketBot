@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=900&color=00F7FF&center=true&vCenter=true&width=650&lines=ITX_YTANXH+Discord+%2B+Minecraft+Bot;Fast+%7C+Secure+%7C+Professional;Made+For+Cracked+and+Premium+Servers" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=900&color=00F7FF&center=true&vCenter=true&width=650&lines=TicketBot+Discord+%2B+BestFree+Bot;Fast+%7C+Secure+%7C+Professional;Made+By+and+ITZ_YTANSH" />
 </p>
 
 # 🎟️ Ultimate Discord Ticket Bot
