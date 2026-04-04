@@ -190,7 +190,7 @@ async def setup(interaction: discord.Interaction, category: discord.CategoryChan
 @commands.has_permissions(administrator=True)
 async def panel(ctx):
     embed = discord.Embed(
-        title=f"🎟️ {BOT_NAME} Ticket Menu",
+        title=f"🎟️ {BOT_NAME} Menu",
         description=(
             "✨ **Welcome to Our Professional Support Hub** ✨\n\n"
             "🔮 **Quick Guide:**\n"
