@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=900&color=00F7FF&center=true&vCenter=true&width=650&lines=ITX_YTANXH+Discord+%2B+Minecraft+Bot;Fast+%7C+Secure+%7C+Professional;Made+For+Cracked+and+Premium+Servers" />
+</p>
+
 # 🎟️ Ultimate Discord Ticket Bot
 A premium Discord ticket bot with dropdown system, private tickets, transcripts, and dynamic branding.
 
