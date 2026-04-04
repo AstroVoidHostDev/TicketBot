@@ -37,8 +37,7 @@ make altinstall
 ---
 3. Upload / Clone bot files
 ```bash
-git clone https://github.com/yourname/ticket-bot.git
-cd ticket-bot
+git clone https://github.com/AstroVoidHostDev/TicketBot
 ```
 ---
 4. Create virtual environment
@@ -60,10 +59,10 @@ nano .env
 Paste:
 ```env
 BOT_TOKEN=your_discord_bot_token
-TICKET_BOT_NAME=hloticket
+TICKET_BOT_NAME=ticketbot
 ```
 ---
-7. Run bot
+7. Run bot # Only For Checking..
 ```bash
 python bot.py
 ```
@@ -86,7 +85,7 @@ Send panel:
 .panel
 ```
 ---
-🔥 PM2 (24/7 HOSTING)
+🔥 PM2 (24/7 HOSTING) # Use This For Start Bot
 Install PM2
 ```bash
 npm install -g pm2
