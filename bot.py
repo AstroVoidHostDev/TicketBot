@@ -102,6 +102,17 @@ class TicketView(discord.ui.View):
 class CloseView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
+        self.claimed_by = None
+
+    @discord.ui.button(label="👑 Claim Ticket", style=discord.ButtonStyle.primary)
+    async def claim(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not await is_admin(interaction.user):
+            await interaction.response.send_message("❌ Only staff!", ephemeral=True)
+            return
+
+        self.claimed_by = interaction.user
+
+        await interaction.response.send_message(f"✅ Ticket claimed by {interaction.user.mention}", ephemeral=False)
 
     @discord.ui.button(label="🔒 Close Ticket", style=discord.ButtonStyle.danger)
     async def close(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -114,8 +125,20 @@ class CloseView(discord.ui.View):
         data = config["servers"].get(str(guild.id), {})
         log_channel = bot.get_channel(data.get("log_channel_id"))
 
-        msgs = [f"{m.author}: {m.content}" async for m in channel.history(limit=200)]
-        file = discord.File(io.StringIO("\n".join(msgs)), filename=f"{channel.name}.txt")
+        # ===== GET USER FROM CHANNEL NAME =====
+        try:
+            user_id = int(channel.name.split("-")[-1])
+            ticket_user = await bot.fetch_user(user_id)
+        except:
+            ticket_user = None
+
+        # ===== SAVE MESSAGES =====
+        msgs = []
+        async for m in channel.history(limit=200, oldest_first=True):
+            msgs.append(f"{m.author}: {m.content}")
+
+        transcript_text = "\n".join(msgs)
+        file = discord.File(io.StringIO(transcript_text), filename=f"{channel.name}.txt")
 
         embed = discord.Embed(
             title="📜 Ticket Closed",
@@ -123,12 +146,30 @@ class CloseView(discord.ui.View):
             color=discord.Color.red()
         )
 
+        if self.claimed_by:
+            embed.add_field(name="✅ Claimed By", value=self.claimed_by.mention, inline=False)
+
+        # ===== SEND TO LOG CHANNEL =====
         if log_channel:
             await log_channel.send(embed=embed, file=file)
 
+        # ===== DM USER =====
+        if ticket_user:
+            try:
+                dm_embed = discord.Embed(
+                    title="📩 Your Ticket Closed",
+                    description=f"Your ticket `{channel.name}` has been closed.",
+                    color=discord.Color.orange()
+                )
+                if self.claimed_by:
+                    dm_embed.add_field(name="✅ Claimed By", value=self.claimed_by.mention, inline=False)
+
+                await ticket_user.send(embed=dm_embed, file=file)
+            except:
+                pass  # DM off hai to ignore
+
         await interaction.response.send_message("Closing...", ephemeral=True)
         await channel.delete()
-
 # =========================
 # SETUP
 # =========================
