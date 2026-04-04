@@ -1,3 +1,4 @@
+#bot.py for ticketbot By ITZ_YTANSH
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands
@@ -210,13 +211,19 @@ async def panel(ctx):
     embed = discord.Embed(
         title=f"🎟️ {BOT_NAME} Menu",
         description=(
-            "✨ **Welcome to Our Professional Support Hub** ✨\n\n"
-            "🔮 **Quick Guide:**\n"
-            "📋 Review our FAQ & Guidelines before submitting\n"
-            "🚀 Our expert team responds within minutes\n"
-            "🎈 Select your ticket type below to get started\n"
-            "🛡️ One ticket per issue for optimal service\n\n"
-            "💎 *We're here to deliver excellence, every time!*"
+                "✨ **Welcome to Our Professional Support Hub** ✨\n\n"
+
+                "🔮 **Getting Started:**\n"
+                "📋 Please take a moment to review our `FAQ` and Guidelines before submitting a request to ensure faster assistance\n" 
+                "🚀 Our `dedicated` support team strives to respond as quickly as `possible`, typically within minutes\n"  
+                "🎯 Choose the appropriate ticket category below to help us understand and resolve your issue efficiently\n"  
+                "🛡️ Kindly maintain one ticket per `issue` to keep support organized and effective\n\n"  
+
+                "💼 **Our Commitment:**\n"  
+                "We are dedicated to providing reliable, high-quality support and ensuring every user receives the best possible experience.\n\n"
+
+               "💎 *Delivering excellence with every interaction — we’re here to `help`!*\n"
+    
         ),
         color=discord.Color.purple()
     )
