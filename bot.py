@@ -58,7 +58,7 @@ class TicketDropdown(discord.ui.Select):
 ),
         ]
         super().__init__(
-            placeholder="Select Ticket Category",
+            placeholder="Select A Option According Your Need",
             min_values=1,
             max_values=1,
             options=options
