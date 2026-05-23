@@ -244,7 +244,7 @@ async def panel(ctx):
         color=discord.Color.purple()
     )
 
-    embed.set_image(url="https://media.discordapp.net/attachments/1487308929795883089/1490607814962319431/ticketbanner.gif?ex=69d4ac35&is=69d35ab5&hm=f1ce40bb3b74c99dc9ed96fc7e026d59bbd01c9df13d3511c86b194dc2298fdf&=")
+    embed.set_image(url="https://media.discordapp.net/attachments/1273291858201677869/1507734991793033286/standard.gif?ex=6a12fb22&is=6a11a9a2&hm=c8f7e4e9a884919f4ab0f4a8c47a67a1e668062cdf1e2d2a3a98dcfb86cc7f6b&=")
     embed.set_footer(text=f"{BOT_NAME} ⚡ | Ultimate Tickets")
 
     await ctx.send(embed=embed, view=TicketView())
